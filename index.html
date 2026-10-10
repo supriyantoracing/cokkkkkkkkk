@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STOCK CALLZY</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    background: #05060a;
+    color: #fff;
+    font-family: 'Rajdhani', sans-serif;
+    min-height: 100vh;
+    padding: 20px;
+    position: relative;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: 
+        radial-gradient(circle at 0% 0%, rgba(0, 255, 255, 0.15), transparent 40%),
+        radial-gradient(circle at 100% 100%, rgba(255, 0, 200, 0.15), transparent 40%);
+    z-index: -2;
+    pointer-events: none;
+}
+body::after {
+    content: "";
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-image: 
+        linear-gradient(rgba(0, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 30px 30px;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.wrap {
+    max-width: 420px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+.brand {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 13px;
+    letter-spacing: 3px;
+    color: #00ffff;
+    text-shadow: 0 0 10px #00ffff;
+    font-weight: 700;
+    margin-bottom: 30px;
+    text-align: left;
+    padding: 5px 0;
+}
+
+.back-btn {
+    float: right;
+    background: transparent;
+    color: #fff;
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 11px;
+    cursor: pointer;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 600;
+    letter-spacing: 2px;
+    display: none;
+}
+.back-btn.show { display: inline-block; }
+
+/* ============ WELCOME ============ */
+#view-welcome {
+    display: block;
+    margin-top: 40px;
+    text-align: center;
+}
+
+.welcome-logo {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 36px;
+    font-weight: 900;
+    letter-spacing: 6px;
+    background: linear-gradient(90deg, #00ffff, #ff00c8);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 10px;
+}
+
+.welcome-sub {
+    font-size: 11px;
+    letter-spacing: 6px;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 50px;
+    font-family: 'Orbitron', sans-serif;
+}
+
+.choose-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    width: 100%;
+}
+
+.choose-card {
+    background: rgba(10, 10, 20, 0.85);
+    border: 2px solid rgba(0, 255, 255, 0.4);
+    border-radius: 12px;
+    padding: 28px 12px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.1s;
+}
+
+.choose-card.buyer { border-color: #00ffff; box-shadow: 0 0 20px rgba(0,255,255,0.3); }
+.choose-card.admin { border-color: #ff00c8; box-shadow: 0 0 20px rgba(255,0,200,0.3); }
+
+.choose-card:active {
+    transform: scale(0.94);
+    background: rgba(30, 30, 50, 0.9);
+}
+
+.choose-icon { font-size: 40px; }
+.choose-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: #fff;
+}
+.choose-desc {
+    font-size: 9px;
+    letter-spacing: 1px;
+    color: rgba(255, 255, 255, 0.5);
+    text-align: center;
+    font-family: 'Orbitron', sans-serif;
+    line-height: 1.4;
+}
+
+/* ============ MAIN MENU ============ */
+#view-main {
+    display: none;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.profile-wrap {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 20px;
+}
+
+.profile-pic {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    background: #0a0a12;
+    border: 2px solid #00ffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 45px;
+    overflow: hidden;
+    box-shadow: 0 0 25px rgba(0, 255, 255, 0.5);
+    cursor: default;
+}
+body.admin-mode .profile-pic { cursor: pointer; }
+
+.profile-pic img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: none;
+}
+.profile-pic input[type="file"] { display: none; }
+
+.profile-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 26px;
+    font-weight: 900;
+    letter-spacing: 5px;
+    background: linear-gradient(90deg, #00ffff, #ff00c8);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    padding: 8px 15px;
+    outline: none;
+    display: inline-block;
+}
+body.admin-mode .profile-name {
+    border: 1px dashed #00ff88;
+    border-radius: 5px;
+}
+
+.profile-sub {
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: rgba(255, 255, 255, 0.5);
+    font-family: 'Orbitron', sans-serif;
+    padding: 3px 10px;
+    outline: none;
+    display: inline-block;
+    margin-top: 5px;
+}
+body.admin-mode .profile-sub {
+    border: 1px dashed #00ff88;
+    border-radius: 4px;
+}
+
+.menu-buttons {
+    width: 100%;
+    display: block;
+    margin-top: 40px;
+}
+
+.btn-menu {
+    width: 100%;
+    background: rgba(10, 10, 20, 0.85);
+    color: #fff;
+    border: 2px solid #00ffff;
+    border-radius: 8px;
+    padding: 22px;
+    font-size: 15px;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    letter-spacing: 4px;
+    cursor: pointer;
+    margin-bottom: 14px;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: transform 0.1s;
+}
+.btn-menu:active {
+    transform: scale(0.96);
+    background: rgba(0, 255, 255, 0.15);
+}
+.btn-menu.ml { border-color: #ff00c8; box-shadow: 0 0 20px rgba(255, 0, 200, 0.3); }
+.btn-menu.ml:active { background: rgba(255, 0, 200, 0.15); }
+
+/* ============ STOCK GRID ============ */
+#view-stock { display: none; }
+
+.stock-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    position: relative;
+}
+
+.page-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 14px;
+    letter-spacing: 4px;
+    color: #00ffff;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.6);
+    font-weight: 700;
+}
+
+.btn-dots {
+    background: transparent;
+    color: #fff;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 6px;
+    width: 40px;
+    height: 34px;
+    font-size: 20px;
+    cursor: pointer;
+    display: none;
+    font-family: 'Orbitron', sans-serif;
+    line-height: 1;
+}
+body.admin-mode .btn-dots { display: block; }
+
+.dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 45px;
+    background: #0a0a14;
+    border: 2px solid #00ffff;
+    border-radius: 8px;
+    padding: 6px;
+    z-index: 100;
+    box-shadow: 0 0 25px rgba(0, 255, 255, 0.4);
+    min-width: 200px;
+}
+.dropdown.show { display: block; }
+.dropdown button {
+    display: block;
+    width: 100%;
+    background: transparent;
+    color: #fff;
+    border: none;
+    text-align: left;
+    padding: 12px 14px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 5px;
+    letter-spacing: 1px;
+}
+.dropdown button:active { background: rgba(0, 255, 255, 0.2); color: #00ffff; }
+
+.stock-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.stock-item {
+    border: 2px solid rgba(0, 255, 255, 0.4);
+    border-radius: 10px;
+    height: 220px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    cursor: pointer;
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    background-color: rgba(10, 10, 20, 0.7);
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: transform 0.1s;
+}
+.stock-item:active { transform: scale(0.96); }
+
+.stock-item .placeholder-x {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 70px;
+    color: rgba(255,255,255,0.08);
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    z-index: 1;
+}
+.stock-item.has-image .placeholder-x { display: none; }
+
+.stock-item::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.95) 100%);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.stock-label {
+    position: relative;
+    z-index: 2;
+    padding: 10px;
+    text-align: center;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    color: #00ffff;
+    text-shadow: 0 0 8px rgba(0, 255, 255, 0.6);
+    border-top: 1px solid rgba(0, 255, 255, 0.4);
+    background: rgba(0, 0, 0, 0.7);
+}
+
+/* ============ DETAIL ============ */
+#view-detail { display: none; }
+
+.detail-box {
+    width: 100%;
+    height: 400px;
+    border: 2px solid rgba(0, 255, 255, 0.4);
+    border-radius: 12px;
+    margin-bottom: 25px;
+    background-size: cover;
+    background-position: center;
+    background-color: rgba(10, 10, 20, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 90px;
+    color: rgba(255,255,255,0.08);
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.15);
+}
+.detail-box.has-image { color: transparent; }
+
+.btn-order {
+    display: block;
+    width: 100%;
+    background: linear-gradient(90deg, #00ffff, #ff00c8);
+    color: #000;
+    border: none;
+    border-radius: 10px;
+    padding: 20px;
+    font-size: 16px;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    cursor: pointer;
+    letter-spacing: 4px;
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: transform 0.1s;
+}
+.btn-order:active { transform: scale(0.96); }
+
+/* ============ MODAL LOGIN ============ */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.9);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+.modal.show { display: flex; }
+
+.modal-box {
+    background: #0a0a14;
+    border: 2px solid #ff00c8;
+    border-radius: 12px;
+    padding: 30px 22px;
+    width: 100%;
+    max-width: 330px;
+    box-shadow: 0 0 50px rgba(255, 0, 200, 0.4);
+    text-align: center;
+}
+
+.modal-box h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 14px;
+    margin-bottom: 22px;
+    letter-spacing: 3px;
+    color: #ff00c8;
+    text-shadow: 0 0 15px rgba(255, 0, 200, 0.6);
+    font-weight: 700;
+}
+
+.modal-box input {
+    width: 100%;
+    padding: 14px;
+    background: rgba(0,0,0,0.6);
+    border: 2px solid rgba(255, 0, 200, 0.4);
+    border-radius: 6px;
+    color: #fff;
+    font-size: 14px;
+    font-family: 'Orbitron', sans-serif;
+    margin-bottom: 12px;
+    text-align: center;
+    letter-spacing: 2px;
+    outline: none;
+    font-weight: 600;
+}
+.modal-box input:focus {
+    border-color: #ff00c8;
+    box-shadow: 0 0 20px rgba(255, 0, 200, 0.5);
+}
+
+.modal-box button {
+    width: 100%;
+    padding: 14px;
+    border-radius: 6px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 6px;
+    letter-spacing: 2px;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.btn-login {
+    background: linear-gradient(90deg, #ff00c8, #00ffff);
+    color: #000;
+    border: none;
+}
+.btn-login:active { transform: scale(0.97); }
+
+.btn-cancel {
+    background: transparent;
+    color: #fff;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.error-msg {
+    color: #ff3355;
+    font-size: 11px;
+    margin-bottom: 10px;
+    min-height: 16px;
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 1px;
+}
+
+/* ============ BADGE ADMIN ============ */
+.badge-admin {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 255, 136, 0.2);
+    border: 2px solid #00ff88;
+    color: #00ff88;
+    padding: 8px 20px;
+    border-radius: 30px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 10px;
+    letter-spacing: 3px;
+    font-weight: 700;
+    z-index: 998;
+    box-shadow: 0 0 25px rgba(0, 255, 136, 0.6);
+}
+.badge-admin.show { display: block; }
+
+</style>
+</head>
+<body>
+
+<div class="wrap">
+    <div class="brand">CALLZY.STORE <button class="back-btn" id="backBtn" onclick="goBack()">← BACK</button></div>
+
+    <!-- WELCOME -->
+    <div id="view-welcome">
+        <div class="welcome-logo">CALLZY</div>
+        <div class="welcome-sub">PREMIUM STOCK</div>
+        <div class="choose-grid">
+            <div class="choose-card buyer" onclick="enterBuyer()">
+                <div class="choose-icon">👤</div>
+                <div class="choose-title">BUYER</div>
+                <div class="choose-desc">LIHAT STOCK<br>& ORDER</div>
+            </div>
+            <div class="choose-card admin" onclick="openLogin()">
+                <div class="choose-icon">🔐</div>
+                <div class="choose-title">ADMIN</div>
+                <div class="choose-desc">LOGIN UNTUK<br>EDIT</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN MENU -->
+    <div id="view-main">
+        <div class="profile-wrap">
+            <label class="profile-pic" for="profileUpload">
+                <span id="profilePlaceholder">😊</span>
+                <img id="profileImg" src="" alt="">
+                <input type="file" id="profileUpload" accept="image/*" disabled>
+            </label>
+        </div>
+        <br>
+        <div class="profile-name" id="profileName" contenteditable="false">CALLZY</div>
+        <br>
+        <div class="profile-sub" id="profileSub" contenteditable="false">PREMIUM STOCK</div>
+
+        <div class="menu-buttons">
+            <button class="btn-menu" onclick="openStock('FF')">STOCK FF</button>
+            <button class="btn-menu ml" onclick="openStock('ML')">STOCK ML</button>
+        </div>
+    </div>
+
+    <!-- STOCK GRID -->
+    <div id="view-stock">
+        <div class="stock-header">
+            <div class="page-title" id="stockTitle">STOCK FF</div>
+            <button class="btn-dots" onclick="toggleDropdown()">⋮</button>
+            <div class="dropdown" id="dropdown">
+                <button onclick="addStock()">+ Tambah Foto Stock</button>
+                <button onclick="deleteStock()">- Hapus Foto Stock</button>
+            </div>
+        </div>
+        <div class="stock-grid" id="stockGrid"></div>
+    </div>
+
+    <!-- DETAIL -->
+    <div id="view-detail">
+        <div class="detail-box" id="detailBox">X</div>
+        <button class="btn-order" onclick="orderWA()">ORDER</button>
+    </div>
+</div>
+
+<!-- BADGE ADMIN -->
+<div class="badge-admin" id="badgeAdmin">● ADMIN MODE</div>
+
+<!-- MODAL LOGIN -->
+<div class="modal" id="loginModal">
+    <div class="modal-box">
+        <h2>🔐 LOGIN ADMIN</h2>
+        <div class="error-msg" id="errorMsg"></div>
+        <input type="text" id="userInput" placeholder="USERNAME" autocomplete="off">
+        <input type="password" id="passInput" placeholder="PASSWORD">
+        <button class="btn-login" onclick="doLogin()">MASUK</button>
+        <button class="btn-cancel" onclick="closeLogin()">BATAL</button>
+    </div>
+</div>
+
+<script>
+// ========== KONFIGURASI ==========
+var WA_NUMBER = "6285895196739";        // 👈 GANTI NOMOR WA
+var ADMIN_USER = "admin";                // 👈 USERNAME ADMIN
+var ADMIN_PASS = "callzy123";            // 👈 PASSWORD ADMIN
+var TOTAL_STOCK = 6;                     // 👈 JUMLAH SLOT
+
+// ========== STATE ==========
+var isAdmin = false;
+var currentType = 'FF';
+var currentDetailIndex = 1;
+var stockData = { 'FF': {}, 'ML': {} };
+var profileData = { name: "CALLZY", sub: "PREMIUM STOCK", photo: "" };
+
+// ========== LOAD DATA ==========
+function loadData() {
+    try {
+        var s = localStorage.getItem('callzy_stock');
+        if (s) stockData = JSON.parse(s);
+        var p = localStorage.getItem('callzy_profile');
+        if (p) {
+            var pp = JSON.parse(p);
+            if (pp.name) profileData.name = pp.name;
+            if (pp.sub) profileData.sub = pp.sub;
+            if (pp.photo) profileData.photo = pp.photo;
+        }
+    } catch(e) {}
+    applyProfile();
+}
+
+function saveData() {
+    try {
+        localStorage.setItem('callzy_stock', JSON.stringify(stockData));
+        localStorage.setItem('callzy_profile', JSON.stringify(profileData));
+    } catch(e) {}
+}
+
+function applyProfile() {
+    document.getElementById('profileName').innerText = profileData.name;
+    document.getElementById('profileSub').innerText = profileData.sub;
+    document.title = "STOCK " + profileData.name;
+    var img = document.getElementById('profileImg');
+    var ph = document.getElementById('profilePlaceholder');
+    if (profileData.photo) {
+        img.src = profileData.photo;
+        img.style.display = 'block';
+        ph.style.display = 'none';
+    }
+}
+
+// ========== SHOW VIEW ==========
+function showView(id) {
+    document.getElementById('view-welcome').style.display = 'none';
+    document.getElementById('view-main').style.display = 'none';
+    document.getElementById('view-stock').style.display = 'none';
+    document.getElementById('view-detail').style.display = 'none';
+    document.getElementById(id).style.display = 'block';
+}
+
+// ========== ENTER AS BUYER ==========
+function enterBuyer() {
+    isAdmin = false;
+    document.body.classList.remove('admin-mode');
+    document.getElementById('badgeAdmin').classList.remove('show');
+    document.getElementById('profileUpload').disabled = true;
+    document.getElementById('profileName').setAttribute('contenteditable', 'false');
+    document.getElementById('profileSub').setAttribute('contenteditable', 'false');
+    showView('view-main');
+    document.getElementById('backBtn').classList.add('show');
+}
+
+// ========== LOGIN ==========
+function openLogin() {
+    document.getElementById('loginModal').classList.add('show');
+    document.getElementById('userInput').value = '';
+    document.getElementById('passInput').value = '';
+    document.getElementById('errorMsg').innerText = '';
+}
+
+function closeLogin() {
+    document.getElementById('loginModal').classList.remove('show');
+}
+
+function doLogin() {
+    var u = document.getElementById('userInput').value.trim();
+    var p = document.getElementById('passInput').value;
+    if (u === ADMIN_USER && p === ADMIN_PASS) {
+        isAdmin = true;
+        document.body.classList.add('admin-mode');
+        document.getElementById('badgeAdmin').classList.add('show');
+        document.getElementById('profileUpload').disabled = false;
+        document.getElementById('profileName').setAttribute('contenteditable', 'true');
+        document.getElementById('profileSub').setAttribute('contenteditable', 'true');
+        closeLogin();
+        showView('view-main');
+        document.getElementById('backBtn').classList.add('show');
+        setTimeout(function() {
+            alert("✅ Login berhasil!\n\nTips: Klik nama / subtitle / foto untuk edit.");
+        }, 200);
+    } else {
+        document.getElementById('errorMsg').innerText = "❌ USERNAME / PASSWORD SALAH!";
+    }
+}
+
+// ========== BACK ==========
+function goBack() {
+    var vDetail = document.getElementById('view-detail');
+    var vStock = document.getElementById('view-stock');
+    var vMain = document.getElementById('view-main');
+    var vWelcome = document.getElementById('view-welcome');
+
+    if (vDetail.style.display === 'block') {
+        showView('view-stock');
+        return;
+    }
+    if (vStock.style.display === 'block') {
+        showView('view-main');
+        return;
+    }
+    if (isAdmin) {
